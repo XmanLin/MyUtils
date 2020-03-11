@@ -204,7 +204,7 @@ export function OutOsName(osVersion) {
 
 
 /**
- * 获取取窗口可视范围的高度
+ * 获取窗口可视范围的高度
  */
 export function getClientHeight() {
     let clientHeight = 0;
@@ -215,6 +215,33 @@ export function getClientHeight() {
         clientHeight = (document.body.clientHeight > document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
     }
     return clientHeight;
+}
+
+/**
+ * 获取窗口尺寸
+ */
+export function getViewportOffset() {
+    if (window.innerWidth) {
+        return {
+            w: window.innerWidth,
+            h: window.innerHeight
+        }
+    } else {
+        // ie8及其以下
+        if (document.compatMode === "BackCompat") {
+            // 怪异模式
+            return {
+                w: document.body.clientWidth,
+                h: document.body.clientHeight
+            }
+        } else {
+            // 标准模式
+            return {
+                w: document.documentElement.clientWidth,
+                h: document.documentElement.clientHeight
+            }
+        }
+    }
 }
 
 
@@ -285,10 +312,8 @@ export function getUrlParams(name, origin = null) {
 export function replaceParamVal(paramName,replaceWith) {
     var oUrl = location.href.toString();
     var re=eval('/('+ paramName+'=)([^&]*)/gi');
-    var nUrl = oUrl.replace(re,paramName+'='+replaceWith);
-    location = nUrl;
-    var newUrl = location.href=nUrl;
-    return newUrl;
+    location.href = oUrl.replace(re,paramName+'='+replaceWith);
+    return location.href;
 }
 
 
@@ -316,9 +341,9 @@ export function funcUrlDel(name){
 
 /**
  * @desc 函数防抖
- * @param { func } 函数
- * @param { wait } 延迟执行毫秒数
- * @param { immediate } true 表立即执行，false 表非立即执行
+ * @param { function } func
+ * @param { number } wait 延迟执行毫秒数
+ * @param { boolean } immediate  true 表立即执行，false 表非立即执行
  */
 export function debounce(func,wait,immediate) {
     let timeout;
@@ -331,7 +356,7 @@ export function debounce(func,wait,immediate) {
             let callNow = !timeout;
             timeout = setTimeout(() => {
                 timeout = null;
-            }, wait)
+            }, wait);
             if (callNow) func.apply(context, args)
         }
         else {
@@ -345,9 +370,9 @@ export function debounce(func,wait,immediate) {
 
 /**
  * @desc 函数节流
- * @param { func } 函数
- * @param { wait } 延迟执行毫秒数
- * @param { type } 1 表时间戳版，2 表定时器版
+ * @param { function } func 函数
+ * @param { number } wait 延迟执行毫秒数
+ * @param { number } type 1 表时间戳版，2 表定时器版
  */
 export function throttle(func, wait ,type) {
     if(type===1){
@@ -382,7 +407,7 @@ export function throttle(func, wait ,type) {
  * 判断类型
  * @param {*} target 
  */
-function type(target) {
+export function type(target) {
     var ret = typeof(target);
     var template = {
         "[object Array]": "array",
@@ -390,7 +415,7 @@ function type(target) {
         "[object Number]":"number - object",
         "[object Boolean]":"boolean - object",
         "[object String]":'string-object'
-    }
+    };
 
     if(target === null) {
         return 'null';
@@ -421,4 +446,369 @@ export function AutoResponse(width = 750) {
         ? (target.style.fontSize = "80px")
         : (target.style.fontSize = target.clientWidth / width * 100 + "px");
 }
+
+
+/**
+ * 数组乱序
+ * @param {array} arr
+ */
+export function shuffle(arr) {
+    let array = arr;
+    let index = array.length;
+
+    while (index) {
+        index -= 1;
+        let randomIndex = Math.floor(Math.random() * index);
+        let middleware = array[index];
+        array[index] = array[randomIndex];
+        array[randomIndex] = middleware
+    }
+
+    return array
+}
+
+/**
+ * 数组交集
+ * @param { array} arr1
+ * @param { array } arr2
+ */
+export const similarity = (arr1, arr2) => arr1.filter(v => arr2.includes(v));
+
+/**
+ * 数组中某元素出现的次数
+ * @param { array } arr
+ * @param {*} value
+ */
+export function countOccurrences(arr, value) {
+    return arr.reduce((a, v) => v === value ? a + 1 : a + 0, 0);
+}
+
+/**
+ * 开启全屏
+ * @param {*} element
+ */
+export function launchFullscreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen()
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen()
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen()
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullScreen()
+    }
+}
+
+/**
+ *  关闭全屏
+ */
+export function exitFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen()
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen()
+    } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen()
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen()
+    }
+}
+
+/**
+ * 加法函数（精度丢失问题）
+ * @param { number } arg1
+ * @param { number } arg2
+ */
+export function add(arg1, arg2) {
+    let r1, r2, m;
+    try { r1 = arg1.toString().split(".")[1].length } catch (e) { r1 = 0 }
+    try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 }
+    m = Math.pow(10, Math.max(r1, r2))
+    return (arg1 * m + arg2 * m) / m
+}
+
+/**
+ * 减法函数（精度丢失问题）
+ * @param { number } arg1
+ * @param { number } arg2
+ */
+export function sub(arg1, arg2) {
+    let r1, r2, m, n;
+    try { r1 = arg1.toString().split(".")[1].length } catch (e) { r1 = 0 }
+    try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 }
+    m = Math.pow(10, Math.max(r1, r2));
+    n = (r1 >= r2) ? r1 : r2;
+    return Number(((arg1 * m - arg2 * m) / m).toFixed(n));
+}
+
+
+/**
+ * 递归优化（尾递归）
+ * @param { function } f
+ */
+export function tco(f) {
+    let value;
+    let active = false;
+    let accumulated = [];
+
+    return function accumulator() {
+        accumulated.push(arguments);
+        if (!active) {
+            active = true;
+            while (accumulated.length) {
+                value = f.apply(this, accumulated.shift());
+            }
+            active = false;
+            return value;
+        }
+    };
+}
+
+
+/**
+ *  生成随机整数
+ *
+ */
+export function randomNumInteger(min, max) {
+    switch (arguments.length) {
+        case 1:
+            return parseInt(Math.random() * min + 1, 10);
+        case 2:
+            return parseInt(Math.random() * (max - min + 1) + min, 10);
+        default:
+            return 0
+    }
+}
+
+/**
+ * 去除空格
+ * @param { string } str 待处理字符串
+ * @param  { number } type 去除空格类型 1-所有空格  2-前后空格  3-前空格 4-后空格 默认为1
+ */
+export function trim(str, type = 1) {
+    if (type && type !== 1 && type !== 2 && type !== 3 && type !== 4) return;
+    switch (type) {
+        case 1:
+            return str.replace(/\s/g, "");
+        case 2:
+            return str.replace(/(^\s)|(\s*$)/g, "");
+        case 3:
+            return str.replace(/(^\s)/g, "");
+        case 4:
+            return str.replace(/(\s$)/g, "");
+        default:
+            return str;
+    }
+}
+
+
+/**
+ * 大小写转换
+ * @param { string } str 待转换的字符串
+ * @param { number } type 1-全大写 2-全小写 3-首字母大写
+ */
+
+export function turnCase(str, type) {
+    switch (type) {
+        case 1:
+            return str.toUpperCase();
+        case 2:
+            return str.toLowerCase();
+        case 3:
+            return str[0].toUpperCase() + str.substr(1).toLowerCase();
+        default:
+            return str;
+    }
+}
+
+/**
+ * 随机16进制颜色 hexColor
+ * 方法一
+ */
+
+export function hexColor() {
+
+    let str = '#';
+    let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
+    for (let i = 0; i < 6; i++) {
+        let index = Number.parseInt(Math.random() * 16);
+        str += arr[index]
+    }
+    return str;
+}
+/**
+ * 随机16进制颜色 randomHexColorCode
+ * 方法二
+ */
+export const randomHexColorCode = () => {
+    let n = (Math.random() * 0xfffff * 1000000).toString(16);
+    return '#' + n.slice(0, 6);
+};
+
+
+
+/**
+ * 转义html(防XSS攻击)
+ */
+export const escapeHTML = str =>{
+    str.replace(
+        /[&<>'"]/g,
+        tag =>
+            ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+    );
+};
+
+/**
+ * 检测移动/PC设备
+ */
+export const detectDeviceType = () => { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'; };
+
+
+/**
+ * 返回当前滚动条位置
+ */
+export const getScrollPosition = (el = window) => ({
+    x: el.pageXOffset !== undefined ? el.pageXOffset : el.scrollLeft,
+    y: el.pageYOffset !== undefined ? el.pageYOffset : el.scrollTop
+});
+
+/**
+ * 滚动到指定元素区域
+ */
+export const smoothScroll = element =>{
+    document.querySelector(element).scrollIntoView({
+        behavior: 'smooth'
+    });
+};
+
+/**
+ * 平滑滚动到页面顶部
+ */
+export const scrollToTop = () => {
+    const c = document.documentElement.scrollTop || document.body.scrollTop;
+    if (c > 0) {
+        window.requestAnimationFrame(scrollToTop);
+        window.scrollTo(0, c - c / 8);
+    }
+};
+
+/**
+ * http跳转https
+ */
+export const httpsRedirect = () => {
+    if (location.protocol !== 'https:') location.replace('https://' + location.href.split('//')[1]);
+};
+
+/**
+ * 隐藏所有指定标签
+ * 例: hide(document.querySelectorAll('img'))
+ */
+export const hideTag = (...el) => [...el].forEach(e => (e.style.display = 'none'));
+
+
+/**
+ * 返回指定元素的生效样式
+ * @param { element} el  元素节点
+ * @param { string } ruleName  指定元素的名称
+ */
+export const getStyle = (el, ruleName) => getComputedStyle(el)[ruleName];
+
+/**
+ * 检查是否包含子元素
+ * @param { element } parent
+ * @param { element } child
+ * 例：elementContains(document.querySelector('head'), document.querySelector('title')); // true
+ */
+export const elementContains = (parent, child) => parent !== child && parent.contains(child);
+
+/**
+ * 返回当前url
+ */
+export const currentURL = () => window.location.href;
+
+/**
+ * 检查页面底部是否可见
+ */
+export const bottomVisible = () =>{
+    return document.documentElement.clientHeight + window.scrollY >=
+    (document.documentElement.scrollHeight || document.documentElement.clientHeight);
+};
+
+/**
+ * 数字超过规定大小加上加号“+”，如数字超过99显示99+
+ * @param { number } val 输入的数字
+ * @param { number } maxNum 数字规定界限
+ */
+export const outOfNum = (val, maxNum) =>{
+    val = val ? val-0 :0;
+    if (val > maxNum ) {
+        return `${maxNum}+`
+    }else{
+        return val;
+    }
+};
+
+
+/**
+ *  base64转file
+ *  @param { base64 } base64
+ *  @param { string } filename 转换后的文件名
+ */
+export const base64ToFile = (base64, filename )=> {
+    let arr = base64.split(',');
+    let mime = arr[0].match(/:(.*?);/)[1];
+    let suffix = mime.split('/')[1] ;// 图片后缀
+    let bstr = atob(arr[1]);
+    let n = bstr.length;
+    let u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], `${filename}.${suffix}`, { type: mime })
+};
+
+/**
+ *  base64转blob
+ *  @param { base64 } base64
+ */
+export const base64ToBlob = base64 => {
+    let arr = base64.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+};
+
+/**
+ *  blob转file
+ *  @param { blob } blob
+ *  @param { string } fileName
+ */
+export const blobToFile = (blob, fileName) => {
+    blob.lastModifiedDate = new Date();
+    blob.name = fileName;
+    return blob;
+};
+
+/**
+ * file转base64
+ * @param {file} file 图片文件
+ */
+export const fileToBase64 = file => {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function (e) {
+        return e.target.result
+    };
+};
 
