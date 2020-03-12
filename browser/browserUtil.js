@@ -93,6 +93,25 @@ export function getClientHeight() {
     return clientHeight;
 }
 
+/**
+ * 获取窗口可视范围宽度
+ */
+export function getPageViewWidth() {
+    let d = document,
+        a = d.compatMode == "BackCompat" ? d.body : d.documentElement;
+    return a.clientWidth;
+}
+
+/**
+ * 获取窗口宽度
+ */
+export function getPageWidth() {
+    let g = document,
+        a = g.body,
+        f = g.documentElement,
+        d = g.compatMode == "BackCompat" ? a : g.documentElement;
+    return Math.max(f.scrollWidth, a.scrollWidth, d.clientWidth);
+}
 
 /**
  * 获取窗口尺寸
@@ -120,6 +139,23 @@ export function getViewportOffset() {
         }
     }
 }
+
+/**
+ *  获取滚动条距顶部高度
+ */
+export function getPageScrollTop() {
+    let a = document;
+    return a.documentElement.scrollTop || a.body.scrollTop;
+}
+
+/**
+ *  获取滚动条距左边的高度
+ */
+function getPageScrollLeft() {
+    let a = document;
+    return a.documentElement.scrollLeft || a.body.scrollLeft;
+}
+
 
 /**
  * 开启全屏
