@@ -5,24 +5,16 @@
 
 /**
  *  金钱格式化，三位加逗号
+ *  @param { number } num
  */
 export const formatMoney = num => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 
 /**
- *  日期数字小于10，补“0”
- */
-export function check(i) {
-    let num;
-    i < 10 ? num = "0" + i : num = i;
-    return num;
-}
-
-/**
  *  截取字符串并加身略号
  */
 export function subText(str, length) {
-    if (str.length == 0) {
+    if (str.length === 0) {
         return '';
     }
     if (str.length > length) {
@@ -115,7 +107,7 @@ export function traceParentNode(pid, data, rootPid, pidName = 'parentId', idName
                 arr = arr.concat(traceParentNode(node[pidName], data, rootPid, pidName, idName));
             }
         }
-    })
+    });
     return arr; 
 }
 
@@ -130,14 +122,25 @@ export function traceChildNode(id, data, pidName = 'parentId', idName = 'id', ch
             arr.push(node);
             arr = arr.concat(traceChildNode(node[idName], data, pidName, idName, childrenName));
         }
-    })
+    });
     return arr;
 }
 
 /**
+ * 根据pid生成树形结构
+ *  @param { object } items 后台获取的数据
+ *  @param { * } id 数据中的id
+ *  @param { * } link 生成树形结构的依据
+ */
+export const createTree = (items, id = null, link = 'pid') =>{
+    items.filter(item => item[link] === id).map(item => ({ ...item, children: createTree(items, item.id) }));
+};
+
+
+/**
  * 查询数组中是否存在某个元素并返回元素第一次出现的下标 
  * @param {*} item 
- * @param { arr } data 
+ * @param { array } data
  */
 export function inArray(item, data) {
     for (let i = 0; i < data.length; i++) {
@@ -204,48 +207,6 @@ export function OutOsName(osVersion) {
 
 
 /**
- * 获取窗口可视范围的高度
- */
-export function getClientHeight() {
-    let clientHeight = 0;
-    if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = (document.body.clientHeight < document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
-    }
-    else {
-        clientHeight = (document.body.clientHeight > document.documentElement.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
-    }
-    return clientHeight;
-}
-
-/**
- * 获取窗口尺寸
- */
-export function getViewportOffset() {
-    if (window.innerWidth) {
-        return {
-            w: window.innerWidth,
-            h: window.innerHeight
-        }
-    } else {
-        // ie8及其以下
-        if (document.compatMode === "BackCompat") {
-            // 怪异模式
-            return {
-                w: document.body.clientWidth,
-                h: document.body.clientHeight
-            }
-        } else {
-            // 标准模式
-            return {
-                w: document.documentElement.clientWidth,
-                h: document.documentElement.clientHeight
-            }
-        }
-    }
-}
-
-
-/**
  * 判断手机是Andoird还是IOS
  *  0: ios
  *  1: android
@@ -262,80 +223,6 @@ export function getOSType() {
         return 1;
     }
     return 2;
-}
-
-
-/**
- * 获取url参数（第一种）
- * @param {*} name 
- * @param {*} origin 
- */
-
-export function getUrlParam(name, origin = null) {
-    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-    let r = null;
-    if (origin == null) {
-        r = window.location.search.substr(1).match(reg);
-    } else {
-        r = origin.substr(1).match(reg);
-    }
-    if (r != null) return decodeURIComponent(r[2]);
-    return null;
-}
-
-/**
- * 获取url参数（第二种）
- * @param {*} name 
- * @param {*} origin 
- */
-export function getUrlParams(name, origin = null) {
-    let url = location.href;
-    let temp1 = url.split('?');
-    let pram = temp1[1];
-    let keyValue = pram.split('&');
-    let obj = {};
-    for (let i = 0; i < keyValue.length; i++) {
-        let item = keyValue[i].split('=');
-        let key = item[0];
-        let value = item[1];
-        obj[key] = value;
-    }
-    return obj[name];
-}
-
-
-/**
- * 修改url中的参数
- * @param { string } paramName 
- * @param { string } replaceWith 
- */
-export function replaceParamVal(paramName,replaceWith) {
-    var oUrl = location.href.toString();
-    var re=eval('/('+ paramName+'=)([^&]*)/gi');
-    location.href = oUrl.replace(re,paramName+'='+replaceWith);
-    return location.href;
-}
-
-
-/**
- * 删除url中指定的参数
- * @param { string } name 
- */
-export function funcUrlDel(name){
-    var loca =location;
-    var baseUrl = loca.origin + loca.pathname + "?";
-    var query = loca.search.substr(1);
-    if (query.indexOf(name)>-1) {
-        var obj = {};
-        var arr = query.split("&");
-        for (var i = 0; i < arr.length; i++) {
-            arr[i] = arr[i].split("=");
-            obj[arr[i][0]] = arr[i][1];
-        }
-        delete obj[name];
-        var url = baseUrl + JSON.stringify(obj).replace(/[\"\{\}]/g,"").replace(/\:/g,"=").replace(/\,/g,"&");
-        return url
-    }
 }
 
 
@@ -435,7 +322,6 @@ export function type(target) {
 export const RandomNum = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 
-
 /**
  * 自适应页面（rem）
  * @param { number } width 
@@ -484,37 +370,6 @@ export function countOccurrences(arr, value) {
 }
 
 /**
- * 开启全屏
- * @param {*} element
- */
-export function launchFullscreen(element) {
-    if (element.requestFullscreen) {
-        element.requestFullscreen()
-    } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen()
-    } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen()
-    } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullScreen()
-    }
-}
-
-/**
- *  关闭全屏
- */
-export function exitFullscreen() {
-    if (document.exitFullscreen) {
-        document.exitFullscreen()
-    } else if (document.msExitFullscreen) {
-        document.msExitFullscreen()
-    } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen()
-    } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen()
-    }
-}
-
-/**
  * 加法函数（精度丢失问题）
  * @param { number } arg1
  * @param { number } arg2
@@ -523,7 +378,7 @@ export function add(arg1, arg2) {
     let r1, r2, m;
     try { r1 = arg1.toString().split(".")[1].length } catch (e) { r1 = 0 }
     try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 }
-    m = Math.pow(10, Math.max(r1, r2))
+    m = Math.pow(10, Math.max(r1, r2));
     return (arg1 * m + arg2 * m) / m
 }
 
@@ -539,6 +394,39 @@ export function sub(arg1, arg2) {
     m = Math.pow(10, Math.max(r1, r2));
     n = (r1 >= r2) ? r1 : r2;
     return Number(((arg1 * m - arg2 * m) / m).toFixed(n));
+}
+/**
+ * 除法函数（精度丢失问题）
+ * @param { number } num1
+ * @param { number } num2
+ */
+export function division(num1,num2){
+    let t1,t2,r1,r2;
+    try{
+        t1 = num1.toString().split('.')[1].length;
+    }catch(e){
+        t1 = 0;
+    }
+    try{
+        t2=num2.toString().split(".")[1].length;
+    }catch(e){
+        t2=0;
+    }
+    r1=Number(num1.toString().replace(".",""));
+    r2=Number(num2.toString().replace(".",""));
+    return (r1/r2)*Math.pow(10,t2-t1);
+}
+
+/**
+ * 乘法函数
+ * @param { number } num1
+ * @param { number } num2
+ */
+export function mcl(num1,num2){
+    let m=0,s1=num1.toString(),s2=num2.toString();
+    try{m+=s1.split(".")[1].length}catch(e){}
+    try{m+=s2.split(".")[1].length}catch(e){}
+    return Number(s1.replace(".",""))*Number(s2.replace(".",""))/Math.pow(10,m);
 }
 
 
@@ -671,41 +559,6 @@ export const detectDeviceType = () => { return /Android|webOS|iPhone|iPad|iPod|B
 
 
 /**
- * 返回当前滚动条位置
- */
-export const getScrollPosition = (el = window) => ({
-    x: el.pageXOffset !== undefined ? el.pageXOffset : el.scrollLeft,
-    y: el.pageYOffset !== undefined ? el.pageYOffset : el.scrollTop
-});
-
-/**
- * 滚动到指定元素区域
- */
-export const smoothScroll = element =>{
-    document.querySelector(element).scrollIntoView({
-        behavior: 'smooth'
-    });
-};
-
-/**
- * 平滑滚动到页面顶部
- */
-export const scrollToTop = () => {
-    const c = document.documentElement.scrollTop || document.body.scrollTop;
-    if (c > 0) {
-        window.requestAnimationFrame(scrollToTop);
-        window.scrollTo(0, c - c / 8);
-    }
-};
-
-/**
- * http跳转https
- */
-export const httpsRedirect = () => {
-    if (location.protocol !== 'https:') location.replace('https://' + location.href.split('//')[1]);
-};
-
-/**
  * 隐藏所有指定标签
  * 例: hide(document.querySelectorAll('img'))
  */
@@ -727,18 +580,6 @@ export const getStyle = (el, ruleName) => getComputedStyle(el)[ruleName];
  */
 export const elementContains = (parent, child) => parent !== child && parent.contains(child);
 
-/**
- * 返回当前url
- */
-export const currentURL = () => window.location.href;
-
-/**
- * 检查页面底部是否可见
- */
-export const bottomVisible = () =>{
-    return document.documentElement.clientHeight + window.scrollY >=
-    (document.documentElement.scrollHeight || document.documentElement.clientHeight);
-};
 
 /**
  * 数字超过规定大小加上加号“+”，如数字超过99显示99+
@@ -802,7 +643,7 @@ export const blobToFile = (blob, fileName) => {
 
 /**
  * file转base64
- * @param {file} file 图片文件
+ * @param { * } file 图片文件
  */
 export const fileToBase64 = file => {
     let reader = new FileReader();
@@ -811,4 +652,6 @@ export const fileToBase64 = file => {
         return e.target.result
     };
 };
+
+
 

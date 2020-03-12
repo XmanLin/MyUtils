@@ -130,6 +130,14 @@ export function getdataTimeSec() {
     return timeText
 }
 
+/**
+ *  日期数字小于10，补“0”
+ */
+export function check(i) {
+    let num;
+    i < 10 ? num = "0" + i : num = i;
+    return num;
+}
 
 
 /**
