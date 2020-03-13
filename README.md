@@ -13,3 +13,4 @@
 5. [正则校验check工具函数](https://github.com/XmanLin/MyUtils/blob/master/check/checkUtil.js)
 
 持续更新中...
+有问题或者没有自己想要的工具函数，欢迎[issues](https://github.com/XmanLin/MyUtils/issues)
