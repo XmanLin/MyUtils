@@ -1,6 +1,6 @@
 /**
  * 主要为存储方面的工具函数
- * 主要来源： 火狼1-掘金（https://juejin.im/post/5de5be53f265da05c33fcbb4）
+ * 感谢主要来源作者： 火狼1-掘金（https://juejin.im/post/5de5be53f265da05c33fcbb4）
  */
 
 /**
