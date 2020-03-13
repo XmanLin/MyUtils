@@ -272,3 +272,14 @@ export function openWindow(url, windowName, width, height) {
         win.focus();
     }
 }
+
+/**
+ * 自适应页面（rem）
+ * @param { number } width
+ */
+export function AutoResponse(width = 750) {
+    const target = document.documentElement;
+    target.clientWidth >= 600
+        ? (target.style.fontSize = "80px")
+        : (target.style.fontSize = target.clientWidth / width * 100 + "px");
+}

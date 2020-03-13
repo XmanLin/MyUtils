@@ -40,7 +40,7 @@ export function fileToBase64String(file, format = ['jpg', 'jpeg', 'png', 'gif'],
         let suffix = file.type.split('/')[1].toLowerCase();
         let inFormat = false;
         for (let i = 0; i < format.length; i++) {
-            if (suffix == format[i]) {
+            if (suffix === format[i]) {
                 inFormat = true;
                 break;
             }
@@ -63,6 +63,85 @@ export function fileToBase64String(file, format = ['jpg', 'jpeg', 'png', 'gif'],
     })
 }
 
+/**
+ * B转换到KB,MB,GB并保留两位小数
+ * @param { number } fileSize
+ */
+export function formatFileSize(fileSize) {
+    let temp;
+    if (fileSize < 1024) {
+        return fileSize + 'B';
+    } else if (fileSize < (1024 * 1024)) {
+        temp = fileSize / 1024;
+        temp = temp.toFixed(2);
+        return temp + 'KB';
+    } else if (fileSize < (1024 * 1024 * 1024)) {
+        temp = fileSize / (1024 * 1024);
+        temp = temp.toFixed(2);
+        return temp + 'MB';
+    } else {
+        temp = fileSize / (1024 * 1024 * 1024);
+        temp = temp.toFixed(2);
+        return temp + 'GB';
+    }
+}
+
+/**
+ *  base64转file
+ *  @param { base64 } base64
+ *  @param { string } filename 转换后的文件名
+ */
+export const base64ToFile = (base64, filename )=> {
+    let arr = base64.split(',');
+    let mime = arr[0].match(/:(.*?);/)[1];
+    let suffix = mime.split('/')[1] ;// 图片后缀
+    let bstr = atob(arr[1]);
+    let n = bstr.length;
+    let u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], `${filename}.${suffix}`, { type: mime })
+};
+
+/**
+ *  base64转blob
+ *  @param { base64 } base64
+ */
+export const base64ToBlob = base64 => {
+    let arr = base64.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+};
+
+/**
+ *  blob转file
+ *  @param { blob } blob
+ *  @param { string } fileName
+ */
+export const blobToFile = (blob, fileName) => {
+    blob.lastModifiedDate = new Date();
+    blob.name = fileName;
+    return blob;
+};
+
+/**
+ * file转base64
+ * @param { * } file 图片文件
+ */
+export const fileToBase64 = file => {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function (e) {
+        return e.target.result
+    };
+};
 
 /**
  * 递归生成树形结构
@@ -153,29 +232,6 @@ export function inArray(item, data) {
 
 
 /**
- * B转换到KB,MB,GB并保留两位小数
- * @param { number } fileSize 
- */
-export function formatFileSize(fileSize) {
-    if (fileSize < 1024) {
-        return fileSize + 'B';
-    } else if (fileSize < (1024 * 1024)) {
-        var temp = fileSize / 1024;
-        temp = temp.toFixed(2);
-        return temp + 'KB';
-    } else if (fileSize < (1024 * 1024 * 1024)) {
-        var temp = fileSize / (1024 * 1024);
-        temp = temp.toFixed(2);
-        return temp + 'MB';
-    } else {
-        var temp = fileSize / (1024 * 1024 * 1024);
-        temp = temp.toFixed(2);
-        return temp + 'GB';
-    }
-}
-
-
-/**
  *  Windows根据详细版本号判断当前系统名称
  * @param { string } osVersion 
  */
@@ -262,10 +318,11 @@ export function debounce(func,wait,immediate) {
  * @param { number } type 1 表时间戳版，2 表定时器版
  */
 export function throttle(func, wait ,type) {
+    let previous, timeout;
     if(type===1){
-        var previous = 0;
+        previous = 0;
     }else if(type===2){
-        var timeout;
+        timeout = null;
     }
     return function() {
         let context = this;
@@ -295,8 +352,8 @@ export function throttle(func, wait ,type) {
  * @param {*} target 
  */
 export function type(target) {
-    var ret = typeof(target);
-    var template = {
+    let ret = typeof(target);
+    let template = {
         "[object Array]": "array",
         "[object Object]":"object",
         "[object Number]":"number - object",
@@ -307,7 +364,7 @@ export function type(target) {
     if(target === null) {
         return 'null';
     }else if(ret == "object"){
-        var str = Object.prototype.toString.call(target);
+        let str = Object.prototype.toString.call(target);
         return template[str];
     }else{
         return ret;
@@ -323,25 +380,12 @@ export const RandomNum = (min, max) => Math.floor(Math.random() * (max - min + 1
 
 
 /**
- * 自适应页面（rem）
- * @param { number } width 
- */
-export function AutoResponse(width = 750) {
-    const target = document.documentElement;
-    target.clientWidth >= 600
-        ? (target.style.fontSize = "80px")
-        : (target.style.fontSize = target.clientWidth / width * 100 + "px");
-}
-
-
-/**
  * 数组乱序
  * @param {array} arr
  */
-export function shuffle(arr) {
+export function arrScrambling(arr) {
     let array = arr;
     let index = array.length;
-
     while (index) {
         index -= 1;
         let randomIndex = Math.floor(Math.random() * index);
@@ -349,9 +393,9 @@ export function shuffle(arr) {
         array[index] = array[randomIndex];
         array[randomIndex] = middleware
     }
-
     return array
 }
+
 
 /**
  * 数组交集
@@ -359,6 +403,7 @@ export function shuffle(arr) {
  * @param { array } arr2
  */
 export const similarity = (arr1, arr2) => arr1.filter(v => arr2.includes(v));
+
 
 /**
  * 数组中某元素出现的次数
@@ -418,7 +463,7 @@ export function division(num1,num2){
 }
 
 /**
- * 乘法函数
+ * 乘法函数（精度丢失问题）
  * @param { number } num1
  * @param { number } num2
  */
@@ -493,7 +538,7 @@ export function trim(str, type = 1) {
 /**
  * 大小写转换
  * @param { string } str 待转换的字符串
- * @param { number } type 1-全大写 2-全小写 3-首字母大写
+ * @param { number } type 1-全大写 2-全小写 3-首字母大写 其他-不转换
  */
 
 export function turnCase(str, type) {
@@ -519,7 +564,7 @@ export function hexColor() {
     let str = '#';
     let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F'];
     for (let i = 0; i < 6; i++) {
-        let index = Number.parseInt(Math.random() * 16);
+        let index = Number.parseInt((Math.random() * 16).toString());
         str += arr[index]
     }
     return str;
@@ -596,62 +641,6 @@ export const outOfNum = (val, maxNum) =>{
 };
 
 
-/**
- *  base64转file
- *  @param { base64 } base64
- *  @param { string } filename 转换后的文件名
- */
-export const base64ToFile = (base64, filename )=> {
-    let arr = base64.split(',');
-    let mime = arr[0].match(/:(.*?);/)[1];
-    let suffix = mime.split('/')[1] ;// 图片后缀
-    let bstr = atob(arr[1]);
-    let n = bstr.length;
-    let u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n)
-    }
-    return new File([u8arr], `${filename}.${suffix}`, { type: mime })
-};
-
-/**
- *  base64转blob
- *  @param { base64 } base64
- */
-export const base64ToBlob = base64 => {
-    let arr = base64.split(','),
-        mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]),
-        n = bstr.length,
-        u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new Blob([u8arr], { type: mime });
-};
-
-/**
- *  blob转file
- *  @param { blob } blob
- *  @param { string } fileName
- */
-export const blobToFile = (blob, fileName) => {
-    blob.lastModifiedDate = new Date();
-    blob.name = fileName;
-    return blob;
-};
-
-/**
- * file转base64
- * @param { * } file 图片文件
- */
-export const fileToBase64 = file => {
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function (e) {
-        return e.target.result
-    };
-};
 
 
 
