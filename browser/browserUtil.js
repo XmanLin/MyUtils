@@ -78,6 +78,26 @@ export function funcUrlDel(name){
     }
 }
 
+/**
+ * 获取全部url参数,并转换成json对象
+ * @param { string } url 
+ */
+export function getUrlAllParams (url) {
+    var url = url ? url : window.location.href;
+    var _pa = url.substring(url.indexOf('?') + 1),
+        _arrS = _pa.split('&'),
+        _rs = {};
+    for (var i = 0, _len = _arrS.length; i < _len; i++) {
+        var pos = _arrS[i].indexOf('=');
+        if (pos == -1) {
+            continue;
+        }
+        var name = _arrS[i].substring(0, pos),
+            value = window.decodeURIComponent(_arrS[i].substring(pos + 1));
+        _rs[name] = value;
+    }
+    return _rs;
+}
 
 /**
  * 获取窗口可视范围的高度
@@ -282,4 +302,19 @@ export function AutoResponse(width = 750) {
     target.clientWidth >= 600
         ? (target.style.fontSize = "80px")
         : (target.style.fontSize = target.clientWidth / width * 100 + "px");
+}
+
+/**
+ * 获取当前浏览器名称
+ */
+export const getExplorerName = () => {
+    const userAgent = window.navigator.userAgent
+    const isExplorer = (exp) => {
+        return userAgent.indexOf(exp) > -1
+    }
+    if (isExplorer('MSIE')) return 'IE'
+    else if (isExplorer('Firefox')) return 'Firefox'
+    else if (isExplorer('Chrome')) return 'Chrome'
+    else if (isExplorer('Opera')) return 'Opera'
+    else if (isExplorer('Safari')) return 'Safari'
 }
