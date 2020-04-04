@@ -59,16 +59,22 @@ export const isMagnet = value => /^magnet:\?xt=urn:btih:[0-9a-fA-F]{40,}.*$/g.te
 export const isSubnetMask = value => /^(?:\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(?:\.(?:\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/g.test(value);
 
 /**
- *  验证linux"文件夹"路径
+ *  验证linux隐藏文件路径
  *  @param { string } value
  */
-export const isLinuxFolderPath = value => /^(\/[^/]+)+\/?$/g.test(value);
+export const isLinuxHiddenFilePath = value => /^\/(?:[^/]+\/)*\.[^/]*/g.test(value);
 
 /**
- *  验证linux"文件"路径
+ *  验证linux文件夹路径
  *  @param { string } value
  */
-export const isLinuxFilePath = value => /^(\/[^/]+)+$/g.test(value);
+export const isLinuxFolderPath = value => /^\/(?:[^/]+\/)*$/g.test(value);
+
+/**
+ *  验证linux文件路径
+ *  @param { string } value
+ */
+export const isLinuxFilePath = value => /^\/(?:[^/]+\/)*[^/]+$/g.test(value);
 
 /**
  *  验证window"文件夹"路径
