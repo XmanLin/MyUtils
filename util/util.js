@@ -850,7 +850,25 @@ export function changeToChinese (Num) {
         return newchar;
     }
 
-
+/**
+ * 根据数组中的某一属性的值（数字）进行升序或降序排序
+ * @param { string } property  排序所依赖的属性
+ * @param { string } flag  "asc"：升序  "desc": 降序
+ * 调用方式：arr.sort(sortCompare('age','asc')); 
+ * 这里的 arr 为准备排序的数组
+ */
+function sortCompare(property,flag){
+    return function(a,b){
+        var value1 = a[property];
+        var value2 = b[property];
+        if(flag === "asc"){
+            return value1 - value2;
+        } else if (flag === "desc"){
+            return value2 - value1;
+        }
+        
+    }
+}
 
 
 
