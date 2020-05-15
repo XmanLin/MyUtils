@@ -299,8 +299,8 @@ export function openWindow(url, windowName, width, height) {
  */
 export function AutoResponse(width = 750) {
     const target = document.documentElement;
-    target.clientWidth >= 600
-        ? (target.style.fontSize = "80px")
+    target.clientWidth >= 750
+        ? (target.style.fontSize = "100px")
         : (target.style.fontSize = target.clientWidth / width * 100 + "px");
 }
 
