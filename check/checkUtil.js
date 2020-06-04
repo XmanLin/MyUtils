@@ -26,7 +26,7 @@ export const isHttpAndPort = value => /^((ht|f)tps?:\/\/)?[\w-]+(\.[\w-]+)+:\d{1
  *  验证网址(支持端口和"?+参数"和"#+参数)
  *  @param { string } value
  */
-export const isRightWebsite = value => /^(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/g.test(value);
+export const isRightWebsite = value => /^(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])?$/g.test(value);
 
 /**
  *  验证统一社会信用代码
@@ -62,13 +62,13 @@ export const isSubnetMask = value => /^(?:\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(?:\.(?
  *  验证linux隐藏文件路径
  *  @param { string } value
  */
-export const isLinuxHiddenFilePath = value => /^\/(?:[^/]+\/)*\.[^/]*/g.test(value);
+export const isLinuxHiddenFilePath = value => /^\/(?:[^\/]+\/)*\.[^\/]*/g.test(value);
 
 /**
  *  验证linux文件夹路径
  *  @param { string } value
  */
-export const isLinuxFolderPath = value => /^\/(?:[^/]+\/)*$/g.test(value);
+export const isLinuxFolderPath = value => /^\/(?:[^\/]+\/)*[^\/]+$/g.test(value);
 
 /**
  *  验证linux文件路径
@@ -104,7 +104,7 @@ export const isGrade = value => /^150$|^(?:\d|[1-9]\d|1[0-4]\d)(?:.5)?$/g.test(v
  *  验证html注释
  *  @param { string } value
  */
-export const isHtmlComments = value => /<!--[\s\S]*?-->/g.test(value);
+export const isHtmlComments = value => /^<!--[\s\S]*?-->$/g.test(value);
 
 /**
  *  验证md5格式(32位)
@@ -146,7 +146,7 @@ export const  is12Hour = value => /^(?:1[0-2]|0?[1-9]):[0-5]\d:[0-5]\d$/g.test(v
  * 验证base64格式
  * @param { string } value
  */
-export const isBase64 = value => /^\s*data:(?:[a-z]+\/[a-z0-9-+.]+(?:;[a-z-]+=[a-z0-9-]+)?)?(?:;base64)?,([a-z0-9!$&',()*+;=\-._~:@/?%\s]*?)\s*$/i.test(value);
+export const isBase64 = value => /^\s*data:(?:[a-z]+\/[a-z0-9-+.]+(?:;[a-z-]+=[a-z0-9-]+)?)?(?:;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*?)\s*$/i.test(value);
 
 /**
  *  验证数字/货币金额（支持负数、千分位分隔符）
@@ -224,25 +224,25 @@ export const isDate = value => /^\d{4}(-)(1[0-2]|0?\d)\1([0-2]\d|\d|30|31)$/g.te
  *  验证email(邮箱)
  * @param { string } value
  */
-export const isEmail = value => /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/g.test(value);
+export const isEmail = value => /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/g.test(value);
 
 /**
  *  验证座机电话(国内),如: 0341-86091234
  * @param { string } value
  */
-export const isLandlineTelephone = value => /\d{3}-\d{8}|\d{4}-\d{7}/g.test(value);
+export const isLandlineTelephone = value => /^\d{3}-\d{8}$|^\d{4}-\d{7}$/g.test(value);
 
 /**
  *  验证身份证号(1代,15位数字)
  * @param { string } value
  */
-export const isIDCardOld = value => /^\d{8}(0\d|10|11|12)([0-2]\d|30|31)\d{3}$/g.test(value);
+export const isIDCardOld = value => /^[1-9]\d{7}(?:0\d|10|11|12)(?:0[1-9]|[1-2][\d]|30|31)\d{3}$/g.test(value);
 
 /**
  *  验证身份证号(2代,18位数字),最后一位是校验位,可能为数字或字符X
  * @param { string } value
  */
-export const isIDCardNew = value => /^\d{6}(18|19|20)\d{2}(0\d|10|11|12)([0-2]\d|30|31)\d{3}[\dXx]$/g.test(value);
+export const isIDCardNew = value => /^[1-9]\d{5}(?:18|19|20)\d{2}(?:0\d|10|11|12)(?:0[1-9]|[1-2]\d|30|31)\d{3}[\dXx]$/g.test(value);
 
 /**
  *  身份证号, 支持1/2代(15位/18位数字)
@@ -320,7 +320,7 @@ export const isLowercase = value => /^[a-z]+$/g.test(value);
  * 验证密码强度，最少6位，包括至少1个大写字母，1个小写字母，1个数字，1个特殊字符
  * @param { string } value
  */
-export const isCorrectFormatPassword = value => /^.*(?=.{6,})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*? ]).*$/g.test(value);
+export const isCorrectFormatPassword = value => /^\S*(?=\S{6,})(?=\S*\d)(?=\S*[A-Z])(?=\S*[a-z])(?=\S*[!@#$%^&*? ])\S*$/g.test(value);
 
 /**
  * 验证用户名，4到16位（字母，数字，下划线，减号）
