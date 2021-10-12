@@ -871,7 +871,84 @@ function sortCompare(property,flag){
 }
 
 
+/**
+ * 查找两个数组中的相同元素
+ * @param { array } arr1
+ * @param { array } arr2
+ */
+export const filterSame = (arr1, arr2) => {
+    if (arr1 && arr1.length > 0) {
+      return arr1.filter((item) => {
+        return arr2.indexOf(item) !== -1
+      })
+    } else {
+      return []
+    }
+  }
 
+/**
+ * 查找两个数组中的不同元素
+ * @param { array } arr1
+ * @param { array } arr2
+ */
+export const filterDiff = (arr1, arr2) => {
+    if (arr1 && arr1.length > 0) {
+      return arr1.filter((item) => {
+        return arr2.indexOf(item) === -1
+      })
+    } else {
+      return []
+    }
+  }
 
+/**
+ * 判断数组中是否有重复元素
+ * @param { Array } arr
+ */
+export const isRepeat = (arr) =>{
+    let hash;
+    for(let i = 0; i < arr .length; i ++) {
+      if(hash[arr[i]]) {
+        return true;
+      }
+      hash[arr[i]] = true;
+    }
+    return false;
+  }
 
+/**
+ * 获取对象中值不为空的元素
+ * @param { obj } value
+ */
+export const getNotNullItem = (value) => {
+    let obj;
+    for (let i in value) {
+      if (value[i]) {
+        obj[i] = value[i]
+      }
+    }
+    return obj;
+  }
 
+/**
+ * 取出字符串中括号"{{}}"内的内容
+ * 他类型的括号同理修改正则/\{\{(.*?)\}\}/g，如需取 "()"中的值，则可以这样：/\((.*?)\)/g
+ * @param {string} text
+ * @returns {Array}
+ */
+export const getBracketStr = (text) => {
+    let result = []
+    if (text === ''){
+        return result
+    }
+    let options = str.match(/\{\{(.*?)\}\}/g);
+    if(options) {
+        options.forEach((item) => {
+            const res = item.replace(/\{/gi,'').replace(/\}/gi,'')
+            if(res) {
+                result.push(res)
+            }
+        })
+    }
+    return result
+}

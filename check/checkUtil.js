@@ -375,3 +375,11 @@ export const isNoWord = value => /^[^A-Za-z]*$/g.test(value);
  * @param { string } value
  */
 export const isJavaPackage = value => /^([a-zA-Z_][a-zA-Z0-9_]*)+([.][a-zA-Z_][a-zA-Z0-9_]*)+$/g.test(value);
+
+/**
+ * 名称正则校验，规则：名称支持中文、英文、数字以及符号：_（）—.- 且不能以 . 开头
+ * @param { string } value
+ */
+ export const nameReg = (value) => {
+    return value.match(/^(?![.])[\u4e00-\u9fa5_a-zA-Z0-9-—\(\)\（\）.]+$/g)
+  }
